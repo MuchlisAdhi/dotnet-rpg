@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -21,6 +23,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace dotnet_rpg
 {
@@ -57,6 +61,26 @@ namespace dotnet_rpg
             services.AddScoped<IWeaponService, WeaponService>();
             services.AddScoped<ICharacterSkillService, CharacterSkillService>();
             services.AddScoped<IFightService, FightService>();
+
+            services.AddSwaggerGen(c => 
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo 
+                {
+                    Version = "v1",
+                    Title = "Rpg API",
+                    Description = "A small text-based role-playing game where different users can register (we’re going to use JSON web tokens for authentication) and create their own characters like a mage or a knight, add some skills and a weapon, and also let the characters fight against each other to see who is the best of them all.",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = @"Github Repository",
+                        Email = "adi.wiratama@gmail.com",
+                        Url = new Uri("https://github.com/MuchlisAdhi/dotnet-rpg")
+                    }
+                });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath, true);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,6 +102,14 @@ namespace dotnet_rpg
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+            app.UseSwagger();
+            app.UseSwaggerUI(c => 
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                c.DocumentTitle = "Rpg API's";
+                c.DocExpansion(DocExpansion.None);
+                c.RoutePrefix = string.Empty;
             });
         }
     }
