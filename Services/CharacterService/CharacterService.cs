@@ -37,6 +37,7 @@ namespace dotnet_rpg.Services.CharacterService
             await _context.Characters.AddAsync(character);
             await _context.SaveChangesAsync();
             serviceResponse.Data = (_context.Characters.Where(c => c.User.Id == GetUserId()).Select(c => _mapper.Map<GetCharacterDto>(c))).ToList();
+            serviceResponse.Message = "Sukses menambahkan karakter";
             return serviceResponse;
         }
 
@@ -53,6 +54,7 @@ namespace dotnet_rpg.Services.CharacterService
                     await _context.SaveChangesAsync();
                     serviceResponse.Data = (_context.Characters.Where(c => c.User.Id == GetUserId())
                         .Select(c => _mapper.Map<GetCharacterDto>(c))).ToList();
+                    serviceResponse.Message = "Sukses hapus karakter";
                 }
                 else 
                 {
@@ -104,6 +106,7 @@ namespace dotnet_rpg.Services.CharacterService
                     await _context.SaveChangesAsync();
 
                     serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
+                    serviceResponse.Message = "Sukses ubah karakter";
                 } 
                 else 
                 {
