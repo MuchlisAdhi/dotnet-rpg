@@ -13,7 +13,7 @@ namespace dotnet_rpg.Controllers
     /// <summary>
     /// An controller to perform CRUD operations on Character
     /// </summary>
-    [Authorize]
+    [Authorize(Roles = "Player,Admin")]
     [ApiController]
     [Route("[controller]")]
     public class CharacterController : ControllerBase
